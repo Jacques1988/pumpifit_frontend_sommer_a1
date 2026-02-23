@@ -1,0 +1,10 @@
+@if (member()) {
+  <p>ID: {{ member().id }}</p>
+  <p>Vorname: {{ member().first_name }}</p>
+  <p>Nachname: {{ member().last_name }}</p>
+  <p>Email: {{ member().email }}</p>
+  <p>Alter: {{ member().age }}</p>
+  <button (click)="onDelete(member().id)">Löschen</button>
+  <button [routerLink]="['details', member().id]">Bearbeiten</button>
+  <hr />
+}

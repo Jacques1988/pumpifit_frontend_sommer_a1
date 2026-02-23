@@ -1,0 +1,7 @@
+<h1>Studio Pumpifit</h1>
+
+@if (members.hasValue()) {
+  @for (member of members.value(); track member.id) {
+    <app-members-list [member]="member"></app-members-list>
+  }
+}

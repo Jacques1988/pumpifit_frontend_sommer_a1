@@ -1,24 +1,19 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, inject, signal, effect } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MemberService } from '../../member-service';
-
-interface MemberFormData {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  age: string;
-}
+import { form, FormField, submit } from '@angular/forms/signals';
+import { MemberFormData } from '../../shared/models/member';
 
 @Component({
   selector: 'app-member-detail-component',
-  imports: [RouterLink],
+  imports: [RouterLink, FormField],
   templateUrl: './member-detail-component.html',
   styleUrl: './member-detail-component.css',
 })
 export class MemberDetailComponent {
+  router = inject(Router);
   route = inject(ActivatedRoute);
   memberId = toSignal<string | null | undefined>(
     this.route.paramMap.pipe(map((params) => params.get('id'))),
@@ -32,4 +27,32 @@ export class MemberDetailComponent {
     email: '',
     age: '',
   });
+  memberForm = form(this.memberFormModel);
+
+  constructor() {
+    effect(() => {
+      if (this.member.hasValue()) {
+        this.memberFormModel.set({
+          id: this.member.value()!.id.toString(),
+          first_name: this.member.value()!.first_name,
+          last_name: this.member.value()!.last_name,
+          email: this.member.value()!.email,
+          age: this.member.value()!.age.toString(),
+        });
+      }
+    });
+  }
+
+  onSubmit(event: Event) {
+    event.preventDefault();
+    submit(this.memberForm, async () => {
+      this.memberService.updateMember(this.memberFormModel()).subscribe({
+        next: () => {
+          this.memberService.allMembers.reload();
+          this.router.navigate(['']);
+        },
+        error: (err) => console.warn(err),
+      });
+    });
+  }
 }

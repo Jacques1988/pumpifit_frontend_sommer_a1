@@ -1,10 +1,13 @@
 <button routerLink="">< zurück</button>
 <h1>Member Details</h1>
-<form>
-  <input type="text" />
-  <input type="text" />
-  <input type="text" />
-  <input type="text" />
-  <input type="text" />
-  <button>Speichern</button>
-</form>
+
+@if (member.hasValue()) {
+  <form (submit)="onSubmit($event)">
+    <input type="text" [formField]="memberForm.id" />
+    <input type="text" [formField]="memberForm.first_name" />
+    <input type="text" [formField]="memberForm.last_name" />
+    <input type="text" [formField]="memberForm.email" />
+    <input type="text" [formField]="memberForm.age" />
+    <button type="submit">Speichern</button>
+  </form>
+}

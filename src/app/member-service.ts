@@ -1,8 +1,8 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '../environments/environment.development';
-import { Member } from './shared/models/member';
-import { Observable } from 'rxjs';
+import { Member, MemberFormData } from './shared/models/member';
+import { first, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +19,21 @@ export class MemberService {
   getMemberById(id: string) {
     const memberId = +id;
     return httpResource<Member>(() => `${this.membersAPIUrl}${memberId}`);
+  }
+
+  updateMember(member: MemberFormData): Observable<Member> {
+    console.log(member);
+    const updatedMember = {
+      id: +member.id,
+      first_name: member.first_name,
+      last_name: member.last_name,
+      email: member.email,
+      age: +member.age,
+    };
+    return this.httpClient.patch<Member>(
+      `${this.membersAPIUrl}${updatedMember.id}`,
+      updatedMember,
+    );
   }
 
   deleteMember(id: number): Observable<Member> {

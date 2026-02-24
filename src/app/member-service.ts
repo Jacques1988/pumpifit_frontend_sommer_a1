@@ -22,7 +22,6 @@ export class MemberService {
   }
 
   updateMember(member: MemberFormData): Observable<Member> {
-    console.log(member);
     const updatedMember = {
       id: +member.id,
       first_name: member.first_name,
